@@ -67,11 +67,13 @@ public class TankController : MonoBehaviour
     
     private void OnEnable()
     {
-        status.OnModuleDamaged += CheckModule;
+        status.OnModuleHpChanged += CheckModule;
+        status.OnTankDestroyed += DisableTank;
     }
     private void OnDisable()
     {
-        status.OnModuleDamaged -= CheckModule;
+        status.OnModuleHpChanged -= CheckModule;
+        status.OnTankDestroyed -= DisableTank;
     }
 
     #region Damage and Modules
@@ -80,10 +82,29 @@ public class TankController : MonoBehaviour
         modules.Add(module);
     }
 
-    //private IEnumerator RepairModule(ModuleType type)
-    //{
-    //    yield return 1f;
-    //}
+    private void DisableTank()
+    {
+        if (isPlayer)
+        {
+            GetComponent<PlayerTankInput>().enabled = false;
+            GetComponent<VehicleCameraController>().enabled = false;
+        }
+        else
+        {
+            GetComponent<TankAIController>().enabled = false;
+            GetComponent<TankAIPerception>().enabled = false;
+            GetComponent<TankNavigation>().enabled = false;
+        }
+
+        GetComponent<ProjectilePoolProvider>().enabled = false;
+        GetComponent<AimingController>().enabled = false;
+        GetComponent<VehicleAudioController>().enabled = false;
+        weaponsController.DisableWeapons();
+        GetComponent<PowertrainSystem>().isEngineRunning = false;
+        isDead = true;
+    }
+
+   
 
     #endregion
 }

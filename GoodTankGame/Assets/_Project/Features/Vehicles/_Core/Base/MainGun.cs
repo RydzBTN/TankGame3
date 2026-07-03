@@ -158,7 +158,6 @@ public class MainGun : MonoBehaviour
             }
             else
             {
-                Debug.Log("nie ma juz takiej amunicji w magazynie");
                 canShoot = true;
             }
         }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AmmoRack : MonoBehaviour
@@ -46,21 +47,31 @@ public class AmmoRack : MonoBehaviour
     }
     private void OnEnable()
     {
-        status.OnModuleDamaged += CheckExplosion;
+        status.OnModuleHpChanged += CheckExplosion;
     }
     private void OnDisable()
     {
-        status.OnModuleDamaged -= CheckExplosion;
+        status.OnModuleHpChanged -= CheckExplosion;
     }
 
     public void Initialize(AmmoSlot[] mainGunAmmo, MgAmmoBeltSlot mgAmmo)
     {
         ClearAmmoRack();
 
-        ammoSlots.AddRange(mainGunAmmo);
+        foreach (var ammo in mainGunAmmo)
+        {
+            ammoSlots.Add(new AmmoSlot
+            {
+                data = ammo.data,
+                quantity = ammo.quantity,
+            });
+        }
 
-        ammoBeltSlot.beltData = mgAmmo.beltData;
-        ammoBeltSlot.quantity = mgAmmo.quantity;
+        ammoBeltSlot = new MgAmmoBeltSlot
+        {
+            beltData = mgAmmo.beltData,
+            quantity = mgAmmo.quantity,
+        };
     }
 
     private void ClearAmmoRack()

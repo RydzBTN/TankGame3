@@ -27,6 +27,22 @@ public class AimingController : MonoBehaviour
     public float TargetMantletPitch => targetMantletRotation;
 
     public bool IsAimed {  get; private set; }
+    private TankStatus status;
+
+    private void Awake()
+    {
+        status = GetComponent<TankStatus>();
+        if (status == null) Debug.LogWarning($"Tank Status Component not found on: {gameObject.name}");
+    }
+
+    private void OnEnable()
+    {
+        status.OnModuleHpChanged += CheckDamage;
+    }
+    private void OnDisable()
+    {
+        status.OnModuleHpChanged -= CheckDamage;
+    }
 
     private void Start()
     {
@@ -171,4 +187,8 @@ public class AimingController : MonoBehaviour
         }
     }
 
+    private void CheckDamage(Module module)
+    {
+
+    }
 }

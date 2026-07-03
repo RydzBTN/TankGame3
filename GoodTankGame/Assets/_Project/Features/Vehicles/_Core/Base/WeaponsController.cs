@@ -24,4 +24,10 @@ public class WeaponsController : MonoBehaviour
             machineGun.projectileSP
         );
     }
+
+    public void DisableWeapons()
+    {
+        mainGun.enabled = false;
+        machineGun.enabled = false;
+    }
 }

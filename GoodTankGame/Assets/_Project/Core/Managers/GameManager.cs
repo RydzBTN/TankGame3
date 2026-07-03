@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
             Debug.LogError($"Mission {mission.title} doesn't have DetailsData. Cancelling scene loading");
             return;
         }
+
+
         this.mission = mission;
 
         SceneManager.sceneLoaded += OnMissionSceneLoaded;

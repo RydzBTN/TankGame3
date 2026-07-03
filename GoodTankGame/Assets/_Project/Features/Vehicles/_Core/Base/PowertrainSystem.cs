@@ -87,7 +87,7 @@ public class PowertrainSystem : MonoBehaviour
     private bool isMovingBackward;
     private bool isInputForward;
     private bool isInputBackward;
-    private bool isEngineRunning = true;
+    public bool isEngineRunning = true;
 
     [Space(15)]
     [Header("WHEELS AND TRACK ANIMATION")]
@@ -98,7 +98,6 @@ public class PowertrainSystem : MonoBehaviour
     private float inputTurn;
     public float engineDurability = 100f;
     private float gearboxDurability = 100f;
-    [SerializeField] private Vector2 playerMoveInput;
     private float leftTrackSpeed;
     private float rightTrackSpeed;
 
@@ -127,11 +126,11 @@ public class PowertrainSystem : MonoBehaviour
 
     private void OnEnable()
     {
-        status.OnModuleDamaged += CheckDamage;
+        status.OnModuleHpChanged += CheckDamage;
     }
     private void OnDisable()
     {
-        status.OnModuleDamaged -= CheckDamage;
+        status.OnModuleHpChanged -= CheckDamage;
     }
     private void Start()
     {
@@ -143,7 +142,6 @@ public class PowertrainSystem : MonoBehaviour
         bool upshift,
         bool downshift)
     {
-        this.playerMoveInput = playerMoveInput;
         inputForward = playerMoveInput.y;
         inputTurn = playerMoveInput.x;
 
@@ -197,13 +195,14 @@ public class PowertrainSystem : MonoBehaviour
 
     private void CheckDamage(Module module)
     {
-        if (module.type != Module.ModuleType.Engine) return;
-
-        engineDurability = module.hp;
+        if (module.type == Module.ModuleType.Engine) engineDurability = module.hp;
+        if (module.type == Module.ModuleType.Transmission) gearboxDurability = module.hp;
     }
 
     #region Engine and Gearbox Simulation
 
+    private float GetEngineDamageValue() => Mathf.Clamp((engineDurability / 100f), 0.1f, 1f);
+    private bool DrawGearChange() => UnityEngine.Random.value <= (gearboxDurability / 100);
     /// <summary>
     /// Zarządza sterowaniem silnika na podstawie inputow oraz stanu pojazdu
     /// </summary>
@@ -427,8 +426,10 @@ public class PowertrainSystem : MonoBehaviour
 
         yield return new WaitForSeconds(gearChangeTime);
 
-        currentGearIndex = gear;
-        status.NotifyGearChange(gear >= 0 ? gear + 1 : gear);
+        // szansa na zmiane biegu maleje wraz z uszkodzeniem transmisji
+        if(DrawGearChange()) currentGearIndex = gear;
+
+        status.NotifyGearChange(currentGearIndex >= 0 ? currentGearIndex + 1 : currentGearIndex);
         isShifting = false;
         lastGearChangeTime = Time.time;
     }
@@ -495,17 +496,17 @@ public class PowertrainSystem : MonoBehaviour
         if (isShifting) return 0f;
 
         float rawEngineTorque = engineTorqueCurve.Evaluate(currentRPM);
-        return rawEngineTorque * GetCurrentGearRatio() * finalDriveRatio * (engineDurability / 100f);
+        return rawEngineTorque * GetCurrentGearRatio() * finalDriveRatio * GetEngineDamageValue();
     }
     private float GetTransmissonOutput(int gear)
     {
         if (isShifting) return 0f;
 
         float rawEngineTorque = engineTorqueCurve.Evaluate(currentRPM);
-        return rawEngineTorque * GetGearRatio(gear) * finalDriveRatio * (engineDurability / 100f);
+        return rawEngineTorque * GetGearRatio(gear) * finalDriveRatio * GetEngineDamageValue();
     }
 
-
+     
     /// <summary>
     /// Takes power and applies on left and right track, 
     /// </summary>

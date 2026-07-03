@@ -29,7 +29,7 @@ public class TankStatus : MonoBehaviour
 
 
     // DAMAGE
-    public event Action<Module> OnModuleDamaged;
+    public event Action<Module> OnModuleHpChanged;
     public event Action OnTankDestroyed;
 
 
@@ -68,7 +68,7 @@ public class TankStatus : MonoBehaviour
     public void NotifyMgAmmoChanged(MgAmmoBeltSlot ammoBelt) => OnMgAmmoChanged?.Invoke(ammoBelt);
 
     // Damage
-    public void NotifyModuleDamage(Module module) => OnModuleDamaged?.Invoke(module);
+    public void NotifyModuleHP(Module module) => OnModuleHpChanged?.Invoke(module);
     public void NotifyTankDestruction()
     {
         OnTankDestroyed?.Invoke();

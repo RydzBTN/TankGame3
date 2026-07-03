@@ -26,16 +26,17 @@ public class Module : MonoBehaviour
         status = GetComponentInParent<TankStatus>();
         if (status == null) Debug.LogWarning($"Tank Status Component not found on: {gameObject.name}");
     }
-   
+
     private void Start()
     {
-        status.NotifyModuleDamage(this);
+        status.NotifyModuleHP(this);
     }
 
 
     public void GetDamage(float damage)
     {
         hp -= damage;
-        status.NotifyModuleDamage(this);
+        hp = Mathf.Clamp(hp, 0f, 100f);
+        status.NotifyModuleHP(this);
     }
 }
