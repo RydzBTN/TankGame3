@@ -26,13 +26,12 @@ public class AmmoRack : MonoBehaviour
 
     [Header("Ammo Storage")]
     [SerializeField] private List<AmmoSlot> ammoSlots = new List<AmmoSlot>();
-    [Space(5)]
-    public int maxAmmo = 100;
-    [Space(15)]
+    [SerializeField] private int maxAmmo = 100;
+
     // Pojazd ma tylko 1 wybrany typ aminicji do km'a
+    [Space(15)]
     [SerializeField] private MgAmmoBeltSlot ammoBeltSlot = new MgAmmoBeltSlot();
-    [Space(5)]
-    public int maxMgAmmo = 3000;
+    [SerializeField] private int maxMgAmmo = 3000;
 
     [Header("Exposion")]
     [SerializeField] private ParticleSystem[] ammoBurnEffects;
@@ -52,6 +51,23 @@ public class AmmoRack : MonoBehaviour
     private void OnDisable()
     {
         status.OnModuleDamaged -= CheckExplosion;
+    }
+
+    public void Initialize(AmmoSlot[] mainGunAmmo, MgAmmoBeltSlot mgAmmo)
+    {
+        ClearAmmoRack();
+
+        ammoSlots.AddRange(mainGunAmmo);
+
+        ammoBeltSlot.beltData = mgAmmo.beltData;
+        ammoBeltSlot.quantity = mgAmmo.quantity;
+    }
+
+    private void ClearAmmoRack()
+    {
+        ammoSlots.Clear();
+        ammoBeltSlot.beltData = null;
+        ammoBeltSlot.quantity = 0;
     }
 
     public bool TryGetAmmo(AmmoData requestedAmmo)

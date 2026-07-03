@@ -56,6 +56,12 @@ public class MenuController
         BuildPeriodsList();
     }
 
+
+
+
+
+
+    #region Mission Explorer
     private void OnBackClicked()
     {
         if(missionList.itemsSource == missions)
@@ -130,7 +136,11 @@ public class MenuController
         missionList.Rebuild();
 
         campaignName.text = campaign.title;
-        campaignDate.text = $"{campaign.start} - {campaign.end}"; ;
+        campaignDate.text = $"{campaign.start} - {campaign.end}";
+    }
+    private void OpenMissionDetails()
+    {
+
     }
 
 
@@ -145,13 +155,17 @@ public class MenuController
         
         button.clicked += () =>
         {
-            if(button.userData is PeriodData period) // sprawdzenie i przypisanie - zapamiętać
+            if(button.userData is PeriodData period) // is == sprawdzenie i przypisanie - zapamiętać
             {
                 BuildCampaignsList(period);
             }
             else if(button.userData is CampaignData campaign)
             {
                 BuildMissionsList(campaign);
+            }
+            else if(button.userData is MissionData mission)
+            {
+                GameManager.Instance.LoadMission(mission);
             }
         };
 
@@ -184,9 +198,12 @@ public class MenuController
         button.text = mission.title;
         button.userData = mission;
     }
+    #endregion
+
 
     public void Dispose()
     {
-        
+        BackButton.clicked -= OnBackClicked;
     }
+
 }

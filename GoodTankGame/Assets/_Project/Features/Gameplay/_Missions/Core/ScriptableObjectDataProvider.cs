@@ -45,4 +45,14 @@ public class ScriptableObjectDataProvider
             .Select(m => MissionConverter.GetMissionDataFromSO(m, campaignSO.id))
             .ToList();
     }
+    public MissionDetailsData GetMissionDetails(string id)
+    {
+        if(!missionDatabase.TryGetValue(id, out MissionSO missionSo))
+        {
+            Debug.LogWarning($"Mission {id} not found");
+            return null;
+        }
+        
+        return MissionConverter.GetMissionDetailsDataFromSO(missionSo);
+    }
 }

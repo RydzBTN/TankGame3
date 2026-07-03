@@ -71,9 +71,9 @@ public class AimingController : MonoBehaviour
     }
 
     /// <summary>
-    /// Naprowadza wieżę i lufę na punkt w worldSpace.
-    /// Wołane przez TankAIController co klatkę zamiast AimFromSight.
-    /// Ustawia IsAimed = true gdy cel jest w toleracji.
+    /// Naprowadza wieżę i lufę na punkt w worldSpace
+    /// Wołane przez AI zamiast AimFromSight
+    /// Ustawia IsAimed = true gdy cel jest w toleracji
     /// </summary>
     public void AimAtPoint(Vector3 worldPos)
     {

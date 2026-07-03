@@ -8,7 +8,6 @@ public class MissionData
     public string sceneId;
     public string description;
 
-
     public bool isCustom;
 }
 
@@ -19,6 +18,8 @@ public class MissionData
 [System.Serializable]
 public class MissionDetailsData
 {
-    public string id;
     public string missionId;
+
+    public ObjectiveData[] objectives;
+    public UnitData[] units;
 }

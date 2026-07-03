@@ -3,6 +3,11 @@ using System.Linq;
 
 public static class MissionConverter
 {
+    #region JSON
+    #endregion
+
+
+    #region Scriptable Object
     public static PeriodData GetPeriodDataFromSO(PeriodSO so)
     {
         return new PeriodData
@@ -15,7 +20,6 @@ public static class MissionConverter
             description = so.description,
         };
     }
-
     public static CampaignData GetCampaignDataFromSO(CampaignSO so, string periodId)
     {
         return new CampaignData
@@ -29,7 +33,6 @@ public static class MissionConverter
             description = so.description,
         };
     }
-
     public static MissionData GetMissionDataFromSO(MissionSO so, string campaignId)
     {
         return new MissionData
@@ -43,5 +46,15 @@ public static class MissionConverter
             isCustom = false
         };
     }
-    
+    public static MissionDetailsData GetMissionDetailsDataFromSO(MissionSO so)
+    {
+        return new MissionDetailsData
+        {
+            missionId = so.id,
+
+            objectives = so.objectives,
+            units = so.units
+        };
+    }
+    #endregion
 }

@@ -34,26 +34,8 @@ public class UIManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-
-
         if (!TryGetComponent<UIDocument>(out playerUI))
             Debug.LogError("UI Manager doesnt have required UI Document component");
-
-    }
-
-    private void Start()
-    {
-        SwitchUIToBattle();
-
-        if (tank == null)
-        {
-            // tymczasowe szybkie przypisanie TankStatus szukając pierwszego wynisku na scenie
-            // zrobić w game manager obsługe spawnu gracza ktory przypisuje hud do czołgu
-            TankStatus playerTank = FindObjectsByType<TankStatus>()
-                .FirstOrDefault(ts => ts.GetComponent<TankController>().isPlayer);
-
-            if (playerTank != null) BindToTank(playerTank);
-        }
     }
 
     // Przypisywanie metod Hud controllera
@@ -99,17 +81,18 @@ public class UIManager : MonoBehaviour
 
 
 
-    public void SwitchUIToMenu()
+    public void ChangeUIToMenu()
     {
         CleanupControllers();
         ChangeUI(MenuUI);
         menuController = new MenuController(playerUI.rootVisualElement);
     }
-    public void SwitchUIToBattle()
+    public void ChangeUIToBattle(TankStatus tank)
     {
         CleanupControllers();
         ChangeUI(BattleUI);
         hc = new HUDController(playerUI.rootVisualElement, ammoSlotPrefab);
+        BindToTank(tank);
     }
     private void ChangeUI(VisualTreeAsset asset)
     {

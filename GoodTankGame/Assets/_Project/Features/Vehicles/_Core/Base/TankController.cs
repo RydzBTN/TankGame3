@@ -13,7 +13,7 @@ public class TankController : MonoBehaviour
     // USTAWIENIA W EDYTORZE (INSPECTOR)
     // ==========================================
     public Team team;
-    public bool isPlayer;
+    public bool isPlayer = false;
     public bool isDead = false;
 
 
@@ -37,8 +37,7 @@ public class TankController : MonoBehaviour
     {
         if (isPlayer)
         {
- 
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         if (!TryGetComponent<TankStatus>(out status))
@@ -56,14 +55,16 @@ public class TankController : MonoBehaviour
         if (!TryGetComponent<WeaponsController>(out weaponsController))
             Debug.LogWarning($"WeaponsController Component not found on: {gameObject.name}");
     }
-    private void Start()
+
+    public void Initialize(UnitData data)
     {
+        isPlayer = data.isPlayer;
+        team = data.team;
+
         weaponsController.InitializeWeapons(ammoRack, rb, projectilePools, status);
+        ammoRack.Initialize(data.ammo, data.mgAmmo);
     }
-    private void LateUpdate()
-    {
-        
-    }
+    
     private void OnEnable()
     {
         status.OnModuleDamaged += CheckModule;

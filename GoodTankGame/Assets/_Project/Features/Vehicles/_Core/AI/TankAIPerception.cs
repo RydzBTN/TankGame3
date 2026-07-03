@@ -11,7 +11,7 @@ public class TankAIPerception : MonoBehaviour
 
     private float lastPerceptionUpdate;
     private const float PERCEPTION_INTERVAL = 0.5f;
-    private TankController myController;
+    private TankController myTank;
 
     public TankController CurrentTarget {  get; private set; }
     public bool CanSeeTarget { get; private set; }
@@ -21,7 +21,7 @@ public class TankAIPerception : MonoBehaviour
 
     private void Awake()
     {
-        myController = GetComponent<TankController>();
+        myTank = GetComponent<TankController>();
     }
 
     private void Update()
@@ -43,7 +43,7 @@ public class TankAIPerception : MonoBehaviour
         foreach(Collider col in inRange)
         {
             TankController tank = col.GetComponentInParent<TankController>();
-            if (tank == null || tank == myController || tank.team == myController.team) continue;
+            if (tank == null || tank == myTank || tank.team == myTank.team) continue;
 
             Vector3 dirToTarget = (col.transform.position - transform.position).normalized;
             float angle = Vector3.Angle(transform.forward, dirToTarget);

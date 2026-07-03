@@ -1,11 +1,20 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Odpowiedzialny za stan gry, przejścia między scenami, zapis i wczytanie gry.
+/// posiada referencje do managerow pomocniczych
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [SerializeField] public ScriptableObjectDataProvider soDataProvider = new ScriptableObjectDataProvider();
+    public UnitDatabaseSO unitDatabase;
+    public ScriptableObjectDataProvider soDataProvider = new ScriptableObjectDataProvider();
+    private SceneLoader loader = new SceneLoader();
+    private MissionManager missionManager;
+
+    private MissionData mission;
 
     private void Awake()
     {
@@ -18,26 +27,43 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        unitDatabase.Initialize();
         soDataProvider.RefreshData();
-
-        SceneManager.sceneLoaded += ChangeUIToScene;
     }
 
-    private void OnDisable()
+    private void Start()
     {
-        SceneManager.sceneLoaded -= ChangeUIToScene;
+        SceneManager.LoadScene("MenuScene");
+        UIManager.Instance.ChangeUIToMenu();
     }
 
 
-    private void ChangeUIToScene(Scene scena, LoadSceneMode mode)
+
+    public void LoadMission(MissionData mission)
     {
-        //if (scena.name.Equals("MenuScene"))
-        //{
-        //    UIManager.Instance.SwitchUIToMenu();
-        //}
-        //else
-        //{
-        //    UIManager.Instance.SwitchUIToBattle();
-        //}
+        Debug.Log($"loading mission {mission.title}");
+        if(soDataProvider.GetMissionDetails(mission.id) == null)
+        {
+            Debug.LogError($"Mission {mission.title} doesn't have DetailsData. Cancelling scene loading");
+            return;
+        }
+        this.mission = mission;
+
+        SceneManager.sceneLoaded += OnMissionSceneLoaded;
+        SceneManager.LoadScene(mission.sceneId);
+    }
+    private void OnMissionSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        SceneManager.sceneLoaded -= OnMissionSceneLoaded;
+
+        missionManager = new MissionManager();
+        missionManager.Initialize(mission);
+        mission = null;
+    }
+
+
+    public void ExitMission()
+    {
+        missionManager = null;
     }
 }
