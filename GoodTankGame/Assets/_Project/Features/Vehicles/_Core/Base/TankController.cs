@@ -15,7 +15,7 @@ public class TankController : MonoBehaviour
     public Team team;
     public bool isPlayer = false;
     public bool isDead = false;
-
+    public string id;
 
     [Space(15)]
     [Header("MODULES")]
@@ -60,6 +60,7 @@ public class TankController : MonoBehaviour
     {
         isPlayer = data.isPlayer;
         team = data.team;
+        id = data.id;
 
         weaponsController.InitializeWeapons(ammoRack, rb, projectilePools, status);
         ammoRack.Initialize(data.ammo, data.mgAmmo);

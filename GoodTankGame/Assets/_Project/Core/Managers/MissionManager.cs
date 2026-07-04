@@ -9,6 +9,9 @@ public class MissionManager
     private MissionData missionData;
     private MissionDetailsData missionDetailsData;
     private ObjectiveData[] objectives;
+    private int currentObjectiveIndex = 0;
+
+    private CaptureZone captureZone = null;
 
     public void Initialize(MissionData mission)
     {
@@ -22,6 +25,7 @@ public class MissionManager
     private void StartMission()
     {
         SpawnForces();
+        CreateObjective();
         AssignOrders();
     }
     private void SpawnForces()
@@ -40,7 +44,8 @@ public class MissionManager
                     if (unit.isPlayer)
                     {
                         Debug.Log("zmiana UI");
-                        UIManager.Instance.ChangeUIToBattle(tank.GetComponent<TankStatus>());
+                        TankStatus status = tank.GetComponent<TankStatus>();
+                        UIManager.Instance.ChangeUIToBattle(status);
                     }
 
                     tank.GetComponent<TankController>().Initialize(unit);
@@ -48,9 +53,32 @@ public class MissionManager
             }
         }
     }
+    private void CreateObjective()
+    {
+        ObjectiveData objective = objectives[currentObjectiveIndex];
+        switch (objective.type)
+        {
+            case ObjectiveData.ObjectiveType.CaptureZone:
+                captureZone = CraeteCaptureZone(objective.point, objective.zoneRadius);
+                captureZone.zoneCaptured += OnZoneCaptured;
+                break;
+        }
+    }
     private void AssignOrders()
     {
 
     }
-    
+
+
+    private CaptureZone CraeteCaptureZone(Vector3 position, float radius)
+    {
+        GameObject zone = GameObject.Instantiate(GameManager.Instance.CaptureZonePrefab, position, Quaternion.Euler(90, 0, 0));
+        zone.transform.localScale = new Vector3(radius, radius, radius);
+        return zone.GetComponent<CaptureZone>();
+    }
+    private void OnZoneCaptured(TankController.Team team)
+    {
+        captureZone.zoneCaptured -= OnZoneCaptured;
+        GameObject.Destroy(captureZone.gameObject);
+    }
 }

@@ -9,7 +9,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    [Header("Units Database")]
     public UnitDatabaseSO unitDatabase;
+
+    [Space(20), Header("Prefabs for runtime Managers")]
+    public GameObject CaptureZonePrefab;
+
+    [Space(20), Header("Data Probider from Scriptable Objects")]
     public ScriptableObjectDataProvider soDataProvider = new ScriptableObjectDataProvider();
     private SceneLoader loader = new SceneLoader();
     private MissionManager missionManager;

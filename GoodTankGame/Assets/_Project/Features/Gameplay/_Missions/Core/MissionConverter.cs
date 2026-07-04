@@ -52,8 +52,8 @@ public static class MissionConverter
         {
             missionId = so.id,
 
-            objectives = so.objectives,
-            units = so.units
+            objectives = (ObjectiveData[])so.objectives.Clone(),
+            units = (UnitData[])so.units
         };
     }
     #endregion

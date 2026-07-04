@@ -58,20 +58,8 @@ public class AmmoRack : MonoBehaviour
     {
         ClearAmmoRack();
 
-        foreach (var ammo in mainGunAmmo)
-        {
-            ammoSlots.Add(new AmmoSlot
-            {
-                data = ammo.data,
-                quantity = ammo.quantity,
-            });
-        }
-
-        ammoBeltSlot = new MgAmmoBeltSlot
-        {
-            beltData = mgAmmo.beltData,
-            quantity = mgAmmo.quantity,
-        };
+        ammoSlots.AddRange(mainGunAmmo);
+        ammoBeltSlot = mgAmmo;
     }
 
     private void ClearAmmoRack()
